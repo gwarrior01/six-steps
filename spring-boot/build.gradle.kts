@@ -10,10 +10,6 @@ java {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(libs.spring.boot.starter)
     testImplementation(libs.spring.boot.starter.test)
