@@ -1,6 +1,6 @@
 [versions]
-springBoot = "3.4.1"
-dependencyManagement = "1.1.7"
+springBoot = "3.2.1"
+dependencyManagement = "1.1.4"
 
 [libraries]
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
