@@ -2,11 +2,20 @@ plugins {
     java
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.dependency.management)
-    id("org.graalvm.buildtools.native") version "0.10.5"
+    alias(libs.plugins.graalvm.native)
 }
+group = "spring-boot"
+version = "1.0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
+}
+
+graalvmNative {
+    binaries.all {
+        buildArgs.add("--no-fallback")
+        buildArgs.add("-Ob")
+    }
 }
 
 repositories {
@@ -15,28 +24,18 @@ repositories {
 
 dependencies {
     implementation(libs.spring.boot.starter)
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.kafka)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
+    implementation(libs.spring.boot.docker.compose)
+
+    runtimeOnly(libs.postgresql)
+
     testImplementation(libs.spring.boot.starter.test)
-
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.kafka:spring-kafka")
-    implementation("org.flywaydb:flyway-core")
-
-    implementation("org.springframework.boot:spring-boot-docker-compose")
-
-    runtimeOnly("org.postgresql:postgresql")
-
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
-
-    testImplementation("org.springframework.kafka:spring-kafka-test")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:kafka")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testImplementation("io.rest-assured:rest-assured:5.3.1")
-    testImplementation("org.awaitility:awaitility:4.2.0")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+    testImplementation(libs.bundles.testcontainers)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.rest.assured)
+    testImplementation(libs.awaitility)
 }

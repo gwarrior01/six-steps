@@ -1,11 +1,35 @@
 [versions]
-springBoot = "3.2.1"
-dependencyManagement = "1.1.4"
+springBoot = "3.4.1"
+dependencyManagement = "1.1.7"
+graalvmNative = "0.10.5"
 
 [libraries]
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose" }
+spring-kafka = { module = "org.springframework.kafka:spring-kafka" }
+flyway-core = { module = "org.flywaydb:flyway-core" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql" }
+postgresql = { module = "org.postgresql:postgresql" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter" }
+testcontainers-kafka = { module = "org.testcontainers:kafka" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql" }
+assertj-core = { module = "org.assertj:assertj-core" }
+rest-assured = { module = "io.rest-assured:rest-assured" }
+awaitility = { module = "org.awaitility:awaitility" }
+
+[bundles]
+testcontainers = [
+    "spring-boot-testcontainers",
+    "testcontainers-junit-jupiter",
+    "testcontainers-kafka",
+    "testcontainers-postgresql"
+]
 
 [plugins]
 spring-boot = {id = "org.springframework.boot", version.ref = "springBoot"}
 dependency-management = {id = "io.spring.dependency-management", version.ref = "dependencyManagement"}
+graalvm-native = {id = "org.graalvm.buildtools.native", version.ref = "graalvmNative"}
