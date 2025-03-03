@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.spring.boot.starter)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.micrometer.prometheus)
     implementation(libs.spring.kafka)
     implementation(libs.flyway.core)
     implementation(libs.flyway.database.postgresql)

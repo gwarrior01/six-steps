@@ -21,7 +21,7 @@ public class SignService {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  @KafkaListener(groupId = "messages", topics = "messages.unsigned")
+  @KafkaListener(id = "sign-message", groupId = "messages", topics = "messages.unsigned")
   public void handleMessage(@Payload UnsignedMessage messageToSign) {
     // Warning! Never use this in production. Use a library and use a proper and modern hashing algorithm
     String signature = DigestUtils.md5DigestAsHex(messageToSign.text().getBytes());

@@ -3,11 +3,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/tech
     username: user
     password: pass
+  jpa:
+    open-in-view: false
   docker:
     compose:
       file: ../docker-compose.yml
       enabled: false
-
   kafka:
     listener:
       missingTopicsFatal: false
@@ -17,3 +18,12 @@ spring:
       properties.spring.json.trusted.packages: tech.best
       auto-offset-reset: earliest
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
