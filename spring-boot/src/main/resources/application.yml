@@ -3,6 +3,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/tech
     username: user
     password: pass
+#  threads:
+#    virtual:
+#      enabled: true
   jpa:
     open-in-view: false
   docker:
