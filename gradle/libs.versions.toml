@@ -2,6 +2,7 @@
 springBoot = "3.4.1"
 dependencyManagement = "1.1.7"
 graalvmNative = "0.10.5"
+micronaut = "4.5.0"
 
 [libraries]
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
@@ -34,3 +35,6 @@ testcontainers = [
 spring-boot = {id = "org.springframework.boot", version.ref = "springBoot"}
 dependency-management = {id = "io.spring.dependency-management", version.ref = "dependencyManagement"}
 graalvm-native = {id = "org.graalvm.buildtools.native", version.ref = "graalvmNative"}
+micronaut-application = {id = "io.micronaut.application", version.ref = "micronaut"}
+micronaut-aot = {id = "io.micronaut.aot", version.ref = "micronaut"}
+gradleup-shadow = {id = "com.gradleup.shadow", version = "8.3.6"}
