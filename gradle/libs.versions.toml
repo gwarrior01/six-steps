@@ -19,7 +19,6 @@ spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-te
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter" }
 testcontainers-kafka = { module = "org.testcontainers:kafka" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql" }
-assertj-core = { module = "org.assertj:assertj-core" }
 rest-assured = { module = "io.rest-assured:rest-assured" }
 awaitility = { module = "org.awaitility:awaitility" }
 

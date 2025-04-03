@@ -37,7 +37,6 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.assertj.core)
     testImplementation(libs.rest.assured)
     testImplementation(libs.awaitility)
 }
