@@ -1,10 +1,12 @@
 package tech.best.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.serde.annotation.Serdeable;
+
 import java.time.Instant;
 import java.util.UUID;
-import org.springframework.lang.Nullable;
 
+@Serdeable.Serializable
 public record SignedMessageDTO(
     @JsonProperty("message_id")
     UUID messageId,
@@ -13,11 +15,9 @@ public record SignedMessageDTO(
     String message,
 
     @JsonProperty("signature")
-    @Nullable
     String signature,
 
     @JsonProperty("signed_at")
-    @Nullable
-    Instant signedAt) {
-
+    Instant signedAt
+) {
 }

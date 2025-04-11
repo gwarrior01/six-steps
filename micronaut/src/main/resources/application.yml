@@ -1,0 +1,11 @@
+micronaut:
+  application:
+    name: demo
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/tech
+    username: user
+    password: pass
+kafka:
+  bootstrap:
+    servers: "localhost:9092"

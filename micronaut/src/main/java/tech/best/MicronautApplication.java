@@ -1,4 +1,4 @@
-package com.example;
+package tech.best;
 
 import io.micronaut.runtime.Micronaut;
 

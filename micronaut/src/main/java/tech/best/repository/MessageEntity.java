@@ -1,11 +1,12 @@
 package tech.best.repository;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.time.Instant;
 import java.util.UUID;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "message")
@@ -16,12 +17,12 @@ public class MessageEntity {
 
   private String text;
 
+  @Column(name = "created_at")
   private Instant createdAt = Instant.now();
 
-  @Nullable
   private String signature;
 
-  @Nullable
+  @Column(name = "signed_at")
   private Instant signedAt;
 
   public MessageEntity() {
@@ -48,12 +49,11 @@ public class MessageEntity {
     this.text = text;
   }
 
-  @Nullable
   public String getSignature() {
     return signature;
   }
 
-  public void setSignature(@Nullable String signature) {
+  public void setSignature( String signature) {
     this.signature = signature;
   }
 
@@ -65,12 +65,12 @@ public class MessageEntity {
     this.createdAt = createdAt;
   }
 
-  @Nullable
   public Instant getSignedAt() {
     return signedAt;
   }
 
-  public void setSignedAt(@Nullable Instant signedAt) {
+  public void setSignedAt(Instant signedAt) {
     this.signedAt = signedAt;
   }
+
 }
