@@ -6,7 +6,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import java.util.UUID;
 
-@Serdeable.Serializable
+@Serdeable
 public record SignedMessageDTO(
     @JsonProperty("message_id")
     UUID messageId,

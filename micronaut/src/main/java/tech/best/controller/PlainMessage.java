@@ -2,7 +2,7 @@ package tech.best.controller;
 
 import io.micronaut.serde.annotation.Serdeable;
 
-@Serdeable.Deserializable
+@Serdeable
 public record PlainMessage(String text) {
 
 }

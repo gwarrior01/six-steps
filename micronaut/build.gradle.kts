@@ -24,7 +24,15 @@ dependencies {
     implementation("io.micronaut.data:micronaut-data-tx-hibernate")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    implementation("io.micronaut.flyway:micronaut-flyway")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
     testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("org.awaitility:awaitility:4.3.0")
+    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
+    testImplementation("org.testcontainers:postgresql:1.20.6")
+    testImplementation("org.testcontainers:kafka:1.20.6")
+    testImplementation("org.testcontainers:testcontainers:1.20.6")
 }
 
 application {
