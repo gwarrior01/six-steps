@@ -5,8 +5,11 @@ import io.micronaut.http.annotation.*;
 import tech.best.MessageService;
 import tech.best.repository.MessageEntity;
 import tech.best.repository.MessageRepository;
+import tech.best.repository.MessageRepositoryJooq;
+import tech.best.tables.pojos.Message;
 
 import java.net.URI;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,9 +17,9 @@ import java.util.UUID;
 class SignMessageController {
 
     private final MessageService messageService;
-    private final MessageRepository messageRepository;
+    private final MessageRepositoryJooq messageRepository;
 
-    public SignMessageController(MessageService messageService, MessageRepository messageRepository) {
+    public SignMessageController(MessageService messageService, MessageRepositoryJooq messageRepository) {
         this.messageService = messageService;
         this.messageRepository = messageRepository;
     }
@@ -35,7 +38,7 @@ class SignMessageController {
     public HttpResponse<SignedMessageDTO> findSignedMessage(@PathVariable UUID messageId) {
         return messageRepository
                 .findById(messageId)
-                .map(message -> HttpResponse.ok(toDto(message)))
+                .map(message -> HttpResponse.ok(toDtoFromJooq(message)))
                 .orElse(HttpResponse.notFound());
     }
 
@@ -44,12 +47,17 @@ class SignMessageController {
         return messageRepository
                 .findAll()
                 .stream()
-                .map(this::toDto)
+                .map(this::toDtoFromJooq)
                 .toList();
     }
 
-    private SignedMessageDTO toDto(MessageEntity message) {
-        return new SignedMessageDTO(message.getId(), message.getText(), message.getSignature(), message.getSignedAt());
+//    private SignedMessageDTO toDto(MessageEntity message) {
+//        return new SignedMessageDTO(message.getId(), message.getText(), message.getSignature(), message.getSignedAt());
+//    }
+
+    private SignedMessageDTO toDtoFromJooq(Message message) {
+        var signedAt = message.getSignedAt() != null ? message.getSignedAt().toInstant(ZoneOffset.UTC) : null;
+        return new SignedMessageDTO(message.getId(), message.getText(), message.getSignature(), signedAt);
     }
 
 }

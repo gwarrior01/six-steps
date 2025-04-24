@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.best.kafka.SingedMessageProducer;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @KafkaListener(
@@ -21,7 +20,7 @@ public class SignService {
 
     private final SingedMessageProducer producer;
 
-    public SignService(SingedMessageProducer producer) throws NoSuchAlgorithmException {
+    public SignService(SingedMessageProducer producer) {
         this.producer = producer;
     }
 

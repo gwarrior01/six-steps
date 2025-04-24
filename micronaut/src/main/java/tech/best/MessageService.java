@@ -6,10 +6,10 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.best.kafka.UnsingedMessageProducer;
-import tech.best.repository.MessageEntity;
-import tech.best.repository.MessageRepository;
+import tech.best.repository.MessageRepositoryJooq;
+import tech.best.tables.pojos.Message;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Singleton
@@ -17,19 +17,20 @@ public class MessageService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
 
-    private final MessageRepository messageRepository;
+    private final MessageRepositoryJooq messageRepository;
     private final UnsingedMessageProducer producer;
 
-    public MessageService(MessageRepository messageRepository, UnsingedMessageProducer producer) {
+    public MessageService(MessageRepositoryJooq messageRepository, UnsingedMessageProducer producer) {
         this.messageRepository = messageRepository;
         this.producer = producer;
     }
 
     public UUID save(String text) {
-        var messageEntity = messageRepository.save(new MessageEntity(UUID.randomUUID(), text));
-        LOG.info("Requesting to sign a message. [messageId={}, text={}]", messageEntity.getId(), messageEntity.getText());
-        producer.send(new SignService.UnsignedMessage(messageEntity.getId(), text));
-        return messageEntity.getId();
+        var message = new Message(UUID.randomUUID(), text, LocalDateTime.now(), null, null);
+        messageRepository.save(message);
+        LOG.debug("Requesting to sign a message. [messageId={}, text={}]", message.getId(), message.getText());
+        producer.send(new SignService.UnsignedMessage(message.getId(), text));
+        return message.getId();
     }
 
     @KafkaListener(
@@ -40,11 +41,15 @@ public class MessageService {
     public void handleMessage(SignService.SignedMessage signedMessage) {
         messageRepository
                 .findById(signedMessage.messageId())
-                .ifPresent(messageEntity -> {
-                    messageEntity.setSignature(signedMessage.signature());
-                    messageEntity.setSignedAt(Instant.now());
-                    messageRepository.update(messageEntity);
-                });
+                .ifPresent(message ->
+                    messageRepository.save(
+                            new Message(
+                                    message.getId(),
+                                    message.getText(),
+                                    message.getCreatedAt(),
+                                    signedMessage.signature(), LocalDateTime.now())
+                    )
+                );
     }
 
 }
