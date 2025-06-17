@@ -1,28 +1,28 @@
 package tech.best.repository;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
-import org.springframework.lang.Nullable;
 
 @Entity
+@RegisterForReflection
 @Table(name = "message")
-public class MessageEntity {
+public class MessageEntity extends PanacheEntityBase {
 
   @Id
-  private UUID id;
+  public UUID id;
 
-  private String text;
+  public String text;
 
-  private Instant createdAt = Instant.now();
+  public Instant createdAt = Instant.now();
 
-  @Nullable
-  private String signature;
+  public String signature;
 
-  @Nullable
-  private Instant signedAt;
+  public Instant signedAt;
 
   public MessageEntity() {
   }
@@ -30,47 +30,5 @@ public class MessageEntity {
   public MessageEntity(UUID id, String text) {
     this.id = id;
     this.text = text;
-  }
-
-  public UUID getId() {
-    return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  @Nullable
-  public String getSignature() {
-    return signature;
-  }
-
-  public void setSignature(@Nullable String signature) {
-    this.signature = signature;
-  }
-
-  public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  @Nullable
-  public Instant getSignedAt() {
-    return signedAt;
-  }
-
-  public void setSignedAt(@Nullable Instant signedAt) {
-    this.signedAt = signedAt;
   }
 }

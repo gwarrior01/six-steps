@@ -1,35 +1,39 @@
 plugins {
     java
-    alias(libs.plugins.spring.boot)
-    alias(libs.plugins.dependency.management)
-    alias(libs.plugins.graalvm.native)
+    id("io.quarkus") version "3.23.3"
 }
+
 group = "quarkus"
 version = "1.0.1"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-}
-
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    implementation(libs.spring.boot.starter)
-    implementation(libs.spring.boot.starter.web)
-    implementation(libs.spring.boot.starter.data.jpa)
-    implementation(libs.spring.boot.starter.actuator)
-    implementation(libs.micrometer.prometheus)
-    implementation(libs.spring.kafka)
-    implementation(libs.flyway.core)
-    implementation(libs.flyway.database.postgresql)
-    implementation(libs.spring.boot.docker.compose)
+    implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:3.23.3"))
+    implementation("io.quarkus:quarkus-rest")
+    implementation("io.quarkus:quarkus-hibernate-orm-panache")
+    implementation("io.quarkus:quarkus-arc")
+    implementation("io.quarkus:quarkus-hibernate-orm")
+    implementation("io.quarkus:quarkus-rest-jackson")
+    implementation("io.quarkus:quarkus-messaging-kafka")
+    implementation("io.quarkus:quarkus-smallrye-health")
+    implementation("io.quarkus:quarkus-jdbc-postgresql")
+    testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.rest-assured:rest-assured")
+}
 
-    runtimeOnly(libs.postgresql)
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
-    testImplementation(libs.spring.boot.starter.test)
-    testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.rest.assured)
-    testImplementation(libs.awaitility)
+tasks.withType<Test> {
+    systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+}
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
 }

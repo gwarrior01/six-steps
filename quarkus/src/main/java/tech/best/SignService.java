@@ -1,34 +1,32 @@
 package tech.best;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.util.UUID;
 
-@Service
+@ApplicationScoped
 public class SignService {
 
   private static final Logger LOG = LoggerFactory.getLogger(SignService.class);
 
-  private final KafkaTemplate<String, SignedMessage> kafkaTemplate;
+  @Inject
+  @Channel("signed-messages")
+  Emitter<SignedMessage> emitter;
 
-  public SignService(KafkaTemplate<String, SignedMessage> kafkaTemplate) {
-    this.kafkaTemplate = kafkaTemplate;
-  }
-
-  @KafkaListener(id = "sign-message", groupId = "messages", topics = "messages.unsigned")
-  public void handleMessage(@Payload UnsignedMessage messageToSign) {
+  @Incoming("unsigned-messages")
+  public void handleMessage(UnsignedMessage messageToSign) {
     // Warning! Never use this in production. Use a library and use a proper and modern hashing algorithm
-    String signature = DigestUtils.md5DigestAsHex(messageToSign.text().getBytes());
+    String signature = "AAAAA";
 
     LOG.debug("Message signed. [messageId={}, text={}]", messageToSign.messageId(), messageToSign.text());
 
-    kafkaTemplate.send("messages.signed", new SignedMessage(messageToSign.messageId(), signature));
+    emitter.send(new SignedMessage(messageToSign.messageId(), signature));
   }
 
   public record UnsignedMessage(UUID messageId, String text) {
@@ -40,4 +38,3 @@ public class SignService {
   }
 
 }
-

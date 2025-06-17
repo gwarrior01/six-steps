@@ -1,60 +1,52 @@
 package tech.best.controller;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import tech.best.MessageService;
 import tech.best.repository.MessageEntity;
-import tech.best.repository.MessageRepository;
+
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/messages")
+@Path("/messages")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class SignMessageController {
 
-  private final MessageService messageService;
-  private final MessageRepository messageRepository;
+  @Inject
+  MessageService messageService;
 
-  public SignMessageController(MessageService messageService, MessageRepository messageRepository) {
-    this.messageService = messageService;
-    this.messageRepository = messageRepository;
-  }
-
-  @PostMapping
-  public ResponseEntity<Void> signMessage(@RequestBody PlainMessage plainMessage) {
+  @POST
+  public Response signMessage(PlainMessage plainMessage) {
     UUID messageId = messageService.save(plainMessage.text());
-
-    return ResponseEntity
-        .accepted()
-        .header(HttpHeaders.LOCATION, "/messages/" + messageId)
-        .build();
+    URI location = UriBuilder.fromPath("/messages/{id}").build(messageId);
+    return Response.accepted().location(location).build();
   }
 
-  @GetMapping("/{messageId}")
-  public ResponseEntity<SignedMessageDTO> findSignedMessage(@PathVariable UUID messageId) {
-    return messageRepository
-        .findById(messageId)
-        .map(message -> ResponseEntity.ok(toDto(message)))
-        .orElse(ResponseEntity.notFound().build());
+  @GET
+  @Path("/{messageId}")
+  public Response findSignedMessage(@PathParam("messageId") UUID messageId) {
+    MessageEntity message = MessageEntity.findById(messageId);
+    if (message == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    return Response.ok(toDto(message)).build();
   }
 
-  @GetMapping
+  @GET
   public List<SignedMessageDTO> findAll() {
-    return messageRepository
-        .findAll()
-        .stream()
-        .map(this::toDto)
-        .toList();
+    return MessageEntity.<MessageEntity>listAll()
+            .stream()
+            .map(this::toDto)
+            .toList();
   }
 
   private SignedMessageDTO toDto(MessageEntity message) {
-    return new SignedMessageDTO(message.getId(), message.getText(), message.getSignature(), message.getSignedAt());
+    return new SignedMessageDTO(message.id, message.text, message.signature, message.signedAt);
   }
 
 }

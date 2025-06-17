@@ -1,45 +1,41 @@
 package tech.best;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
 import tech.best.repository.MessageEntity;
-import tech.best.repository.MessageRepository;
+
 import java.time.Instant;
 import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Service;
 
-@Service
+@ApplicationScoped
 public class MessageService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
 
-  private final MessageRepository messageRepository;
-  private final KafkaTemplate<String, SignService.UnsignedMessage> kafkaTemplate;
+    @Channel("unsigned-messages")
+    Emitter<SignService.UnsignedMessage> emitter;
 
-  public MessageService(MessageRepository messageRepository, KafkaTemplate<String, SignService.UnsignedMessage> kafkaTemplate) {
-    this.messageRepository = messageRepository;
-    this.kafkaTemplate = kafkaTemplate;
-  }
+    public UUID save(String text) {
+        MessageEntity messageEntity = new MessageEntity(UUID.randomUUID(), text);
+        messageEntity.persist();
+        LOG.debug("Requesting to sign a message. [messageId={}, text={}]", messageEntity.id, messageEntity.text);
+        emitter.send(new SignService.UnsignedMessage(messageEntity.id, messageEntity.text));
+        return messageEntity.id;
+    }
 
-  public UUID save(String text) {
-    MessageEntity messageEntity = messageRepository.save(new MessageEntity(UUID.randomUUID(), text));
-    LOG.debug("Requesting to sign a message. [messageId={}, text={}]", messageEntity.getId(), messageEntity.getText());
-    kafkaTemplate.send("messages.unsigned", new SignService.UnsignedMessage(messageEntity.getId(), messageEntity.getText()));
-    return messageEntity.getId();
-  }
-
-  @KafkaListener(groupId = "messages", topics = "messages.signed")
-  public void handleMessage(@Payload SignService.SignedMessage signedMessage) {
-    messageRepository
-        .findById(signedMessage.messageId())
-        .ifPresent(messageEntity -> {
-          messageEntity.setSignature(signedMessage.signature());
-          messageEntity.setSignedAt(Instant.now());
-          messageRepository.save(messageEntity);
-        });
-  }
+    @Incoming("signed-messages")
+    public void handleMessage(SignService.SignedMessage signedMessage) {
+        MessageEntity messageEntity = MessageEntity.findById(signedMessage.messageId());
+        if (messageEntity != null) {
+            messageEntity.signature = signedMessage.signature();
+            messageEntity.signedAt = Instant.now();
+            messageEntity.persist();
+        }
+    }
 
 }
