@@ -2,6 +2,7 @@ package tech.best.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,10 +19,12 @@ public class MessageEntity extends PanacheEntityBase {
 
   public String text;
 
+  @Column(name = "created_at")
   public Instant createdAt = Instant.now();
 
   public String signature;
 
+  @Column(name = "signed_at")
   public Instant signedAt;
 
   public MessageEntity() {

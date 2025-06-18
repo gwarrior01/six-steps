@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_DB=tech
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   kafka:
     image: confluentinc/cp-kafka:7.8.0

@@ -24,7 +24,7 @@ public class SignService {
     // Warning! Never use this in production. Use a library and use a proper and modern hashing algorithm
     String signature = "AAAAA";
 
-    LOG.debug("Message signed. [messageId={}, text={}]", messageToSign.messageId(), messageToSign.text());
+    LOG.info("Message signed. [messageId={}, text={}]", messageToSign.messageId(), messageToSign.text());
 
     emitter.send(new SignedMessage(messageToSign.messageId(), signature));
   }
