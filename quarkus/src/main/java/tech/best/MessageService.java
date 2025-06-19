@@ -35,7 +35,6 @@ public class MessageService {
     }
 
     @Incoming("signed-messages")
-    @Blocking
     @Transactional
     public void handleMessage(SignService.SignedMessage signedMessage) {
         MessageEntity messageEntity = MessageEntity.findById(signedMessage.messageId());
